@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {};
+require("@tailwindcss/typography");
 
-module.exports = nextConfig
+module.exports = nextConfig;
