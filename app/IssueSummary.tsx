@@ -10,19 +10,19 @@ interface Props {
 }
 
 const IssueSummary = ({ open, inProgress, closed }: Props) => {
-  const Containers: { label: string; value: number; status: Status }[] = [
+  const containers: { label: string; value: number; status: Status }[] = [
     { label: "Open Issues", value: open, status: "OPEN" },
     { label: "In-Progress Issues", value: inProgress, status: "IN_PROGRESS" },
     { label: "Closed Issues", value: closed, status: "CLOSED" },
   ];
   return (
     <Flex gap="4">
-      {Containers.map((container) => (
+      {containers.map((container) => (
         <Card key={container.label}>
           <Flex direction="column" gap="1">
             <Link
-              href={`/issues/list?status=${container.status}`}
               className="text-sm font-medium"
+              href={`/issues/list?status=${container.status}`}
             >
               {container.label}
             </Link>
