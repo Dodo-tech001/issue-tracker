@@ -11,14 +11,15 @@ import AssigneeSelect from "./AssigneeSelect";
 import { cache } from "react";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const fetchUser = cache((issueId: number) =>
   prisma.issue.findUnique({ where: { id: issueId } })
 );
 
-const IssueDetailPage = async ({ params }: Props) => {
+const IssueDetailPage = async (props: Props) => {
+  const params = await props.params;
   const session = await getServerSession(authOptions);
   const issue = await fetchUser(parseInt(params.id));
   if (!issue) notFound();
@@ -40,7 +41,8 @@ const IssueDetailPage = async ({ params }: Props) => {
     </Grid>
   );
 };
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const issue = await fetchUser(parseInt(params.id));
 
   return {

@@ -10,7 +10,8 @@ interface Props {
   searchParams: Promise<IssueQuery>;
 }
 
-const IssuesPage = async ({ searchParams }: Props) => {
+const IssuesPage = async (props: Props) => {
+  const searchParams = await props.searchParams;
   // Await searchParams before using its properties
   const params = await searchParams;
 
