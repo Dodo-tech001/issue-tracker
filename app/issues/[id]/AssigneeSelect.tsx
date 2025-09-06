@@ -16,7 +16,7 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
 
   const assignIssue = (userId: string) => {
     axios
-      .patch("/api/issues/" + issue.id, {
+      .patch(`/api/issues/${issue.id}`, {
         assignedToUserId: userId || null,
       })
       .catch(() => {
@@ -24,13 +24,19 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
       });
   };
 
+  // Determine the display text for the trigger
+  const selectedUser = users.find((user) => user.id === issue.assignedToUserId);
+  const triggerText = selectedUser ? selectedUser.name : "Assign";
+
   return (
     <>
       <Select.Root
         defaultValue={issue.assignedToUserId || ""}
         onValueChange={assignIssue}
       >
-        <Select.Trigger placeholder="Assign" />
+        <Select.Trigger>
+          <span className="text-gray-500">{triggerText}</span>
+        </Select.Trigger>
         <Select.Content>
           <Select.Group>
             <Select.Label>Suggestions</Select.Label>
@@ -52,8 +58,8 @@ const useUsers = () =>
   useQuery<User[]>({
     queryKey: ["users"],
     queryFn: () => axios.get("/api/users").then((res) => res.data),
-    staleTime: 60 * 1000,
-    retry: 3,
+    staleTime: 60 * 1000, // Cache for 1 minute
+    retry: 3, // Retry up to 3 times on failure
   });
 
 export default AssigneeSelect;
