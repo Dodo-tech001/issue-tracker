@@ -7,21 +7,22 @@ import { Flex } from "@radix-ui/themes";
 import { Metadata } from "next";
 
 interface Props {
-  searchParams: IssueQuery;
+  searchParams: Promise<IssueQuery>;
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
+  // Await searchParams before using its properties
+  const params = await searchParams;
+
   const statuses = Object.values(Status);
-  const status = statuses.includes(searchParams.status)
-    ? searchParams.status
-    : undefined;
+  const status = statuses.includes(params.status) ? params.status : undefined;
   const where = { status };
 
-  const orderBy = columnNames.includes(searchParams.orderBy)
-    ? { [searchParams.orderBy]: "asc" }
+  const orderBy = columnNames.includes(params.orderBy)
+    ? { [params.orderBy]: "asc" }
     : undefined;
 
-  const page = parseInt(searchParams.page) || 1;
+  const page = parseInt(params.page) || 1;
   const pageSize = 10;
 
   const issues = await prisma.issue.findMany({
@@ -32,10 +33,18 @@ const IssuesPage = async ({ searchParams }: Props) => {
   });
 
   const issueCount = await prisma.issue.count({ where });
+
+  // Create a plain object to pass to client components
+  const searchParamsObject = {
+    status: params.status,
+    orderBy: params.orderBy,
+    page: params.page,
+  };
+
   return (
     <Flex direction="column" gap="3">
       <IssueActions />
-      <IssueTable searchParams={searchParams} issues={issues} />
+      <IssueTable searchParams={searchParamsObject} issues={issues} />
       <Pagination
         pageSize={pageSize}
         currentPage={page}

@@ -17,6 +17,15 @@ interface Props {
   issues: Issue[];
 }
 
+// Move columns array definition BEFORE it's used
+const columns: { label: string; value: keyof Issue; className?: string }[] = [
+  { label: "Issue", value: "title" },
+  { label: "Status", value: "status", className: "hidden md:table-cell" },
+  { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+];
+
+export const columnNames = columns.map((column) => column.value);
+
 const IssueTable = ({ searchParams, issues }: Props) => {
   return (
     <Table.Root variant="surface">
@@ -62,13 +71,5 @@ const IssueTable = ({ searchParams, issues }: Props) => {
     </Table.Root>
   );
 };
-
-const columns: { label: string; value: keyof Issue; className?: string }[] = [
-  { label: "Issue", value: "title" },
-  { label: "Status", value: "status", className: "hidden md:table-cell" },
-  { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
-];
-
-export const columnNames = columns.map((column) => column.value);
 
 export default IssueTable;
