@@ -4,7 +4,12 @@ import Link from "next/link";
 import React from "react";
 import { IssueStatusBadge } from "./components";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const LatestIssues = async () => {
+  console.log("LatestIssues: Fetching at", new Date().toISOString());
+
   const issues = await prisma.issue.findMany({
     orderBy: { createdAt: "desc" },
     take: 5,
@@ -12,6 +17,16 @@ const LatestIssues = async () => {
       assignedToUser: true,
     },
   });
+
+  console.log("LatestIssues: Found", issues.length, "issues");
+  if (issues.length > 0) {
+    console.log(
+      "LatestIssues: Most recent:",
+      issues[0].title,
+      issues[0].createdAt
+    );
+  }
+
   return (
     <Card>
       <Heading size="4" mb="5">
