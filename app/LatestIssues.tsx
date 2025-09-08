@@ -23,6 +23,9 @@ const LatestIssues = async () => {
   // Only fetch issues if user is logged in
   if (session) {
     issues = await prisma.issue.findMany({
+      where: {
+        assignedToUserId: session.user.id,
+      },
       orderBy: { createdAt: "desc" },
       take: 5,
       include: {
