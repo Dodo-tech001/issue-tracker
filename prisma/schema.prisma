@@ -22,7 +22,6 @@ model Issue {
   updatedAt        DateTime @updatedAt
   assignedToUserId String?  @db.VarChar(255)
   assignedToUser   User?    @relation(fields: [assignedToUserId], references: [id])
-  createdByUserId  String   @db.VarChar(255)
 }
 
 enum Status {
