@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     data: {
       title: body.title,
       description: body.description,
+      createdByUserId: session.user.id,
       assignedToUserId: session.user.id,
     },
   });

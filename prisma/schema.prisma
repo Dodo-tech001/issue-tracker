@@ -22,6 +22,8 @@ model Issue {
   updatedAt        DateTime @updatedAt
   assignedToUserId String?  @db.VarChar(255)
   assignedToUser   User?    @relation(fields: [assignedToUserId], references: [id])
+  createdByUserId  String?  @db.VarChar(255)
+  createdByUser    User?    @relation("CreatedIssues", fields: [createdByUserId], references: [id])
 }
 
 enum Status {
@@ -69,6 +71,7 @@ model User {
   accounts       Account[]
   sessions       Session[]
   assignedIssues Issue[]
+  createdIssues  Issue[]   @relation("CreatedIssues")
 
   @@map("users")
 }
