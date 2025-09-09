@@ -23,7 +23,7 @@ const IssuesPage = async ({ searchParams }: Props) => {
 
   const where = {
     status,
-    assignedToUserId: session.user.id,
+    createdByUserId: session.user.id,
   };
 
   const orderBy = columnNames.includes(params.orderBy)

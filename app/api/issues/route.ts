@@ -16,7 +16,8 @@ export async function POST(request: NextRequest) {
     data: {
       title: body.title,
       description: body.description,
-      assignedToUserId: session.user.id,
+      createdByUserId: session.user.id,
+      assignedToUserId: session.user.id || null,
     },
   });
   return NextResponse.json(newIssue, { status: 201 });
