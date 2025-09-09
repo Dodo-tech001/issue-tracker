@@ -9,28 +9,28 @@ import { getServerSession } from "next-auth/next";
 import authOptions from "@/app/auth/authOptions";
 
 interface Props {
-  searchParams: IssueQuery;
+  searchParams: Promise<IssueQuery>;
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
   const session = await getServerSession(authOptions);
-  if (!session) return null; // redirect to login later if you want
+  if (!session) return null;
+
+  const params = await searchParams; // ✅ await here
 
   const statuses = Object.values(Status);
-  const status = statuses.includes(searchParams.status)
-    ? searchParams.status
-    : undefined;
+  const status = statuses.includes(params.status) ? params.status : undefined;
 
   const where = {
     status,
-    assignedToUserId: session.user.id, // ✅ filter by logged-in user
+    assignedToUserId: session.user.id,
   };
 
-  const orderBy = columnNames.includes(searchParams.orderBy)
-    ? { [searchParams.orderBy]: "asc" }
+  const orderBy = columnNames.includes(params.orderBy)
+    ? { [params.orderBy]: "asc" }
     : undefined;
 
-  const page = parseInt(searchParams.page) || 1;
+  const page = parseInt(params.page) || 1;
   const pageSize = 10;
 
   const issues = await prisma.issue.findMany({
@@ -43,9 +43,9 @@ const IssuesPage = async ({ searchParams }: Props) => {
   const issueCount = await prisma.issue.count({ where });
 
   const searchParamsObject = {
-    status: searchParams.status,
-    orderBy: searchParams.orderBy,
-    page: searchParams.page,
+    status: params.status,
+    orderBy: params.orderBy,
+    page: params.page,
   };
 
   return (
