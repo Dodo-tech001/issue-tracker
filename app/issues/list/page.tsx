@@ -7,13 +7,12 @@ import { Flex } from "@radix-ui/themes";
 import { Metadata } from "next";
 
 interface Props {
-  searchParams: Promise<IssueQuery>;
+  searchParams: IssueQuery;
 }
 
 const IssuesPage = async (props: Props) => {
-  const searchParams = await props.searchParams;
-  // Await searchParams before using its properties
-  const params = await searchParams;
+  const searchParams = props.searchParams;
+  const params = searchParams;
 
   const statuses = Object.values(Status);
   const status = statuses.includes(params.status) ? params.status : undefined;
