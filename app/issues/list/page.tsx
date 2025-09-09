@@ -5,24 +5,32 @@ import IssueActions from "./IssueActions";
 import IssueTable, { columnNames, IssueQuery } from "./IssueTable";
 import { Flex } from "@radix-ui/themes";
 import { Metadata } from "next";
+import { getServerSession } from "next-auth/next";
+import authOptions from "@/app/auth/authOptions";
 
 interface Props {
   searchParams: IssueQuery;
 }
 
-const IssuesPage = async (props: Props) => {
-  const searchParams = props.searchParams;
-  const params = searchParams;
+const IssuesPage = async ({ searchParams }: Props) => {
+  const session = await getServerSession(authOptions);
+  if (!session) return null; // redirect to login later if you want
 
   const statuses = Object.values(Status);
-  const status = statuses.includes(params.status) ? params.status : undefined;
-  const where = { status };
-
-  const orderBy = columnNames.includes(params.orderBy)
-    ? { [params.orderBy]: "asc" }
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
     : undefined;
 
-  const page = parseInt(params.page) || 1;
+  const where = {
+    status,
+    assignedToUserId: session.user.id, // ✅ filter by logged-in user
+  };
+
+  const orderBy = columnNames.includes(searchParams.orderBy)
+    ? { [searchParams.orderBy]: "asc" }
+    : undefined;
+
+  const page = parseInt(searchParams.page) || 1;
   const pageSize = 10;
 
   const issues = await prisma.issue.findMany({
@@ -34,11 +42,10 @@ const IssuesPage = async (props: Props) => {
 
   const issueCount = await prisma.issue.count({ where });
 
-  // Create a plain object to pass to client components
   const searchParamsObject = {
-    status: params.status,
-    orderBy: params.orderBy,
-    page: params.page,
+    status: searchParams.status,
+    orderBy: searchParams.orderBy,
+    page: searchParams.page,
   };
 
   return (
