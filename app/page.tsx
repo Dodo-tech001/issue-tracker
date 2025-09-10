@@ -22,11 +22,15 @@ export default async function Home() {
     closed = 0;
 
   if (session) {
-    open = await prisma.issue.count({ where: { status: "OPEN" } });
-    inProgress = await prisma.issue.count({
-      where: { status: "IN_PROGRESS" },
+    open = await prisma.issue.count({
+      where: { status: "OPEN", assignedToUserId: session.user.id },
     });
-    closed = await prisma.issue.count({ where: { status: "CLOSED" } });
+    inProgress = await prisma.issue.count({
+      where: { status: "IN_PROGRESS", assignedToUserId: session.user.id },
+    });
+    closed = await prisma.issue.count({
+      where: { status: "CLOSED", assignedToUserId: session.user.id },
+    });
   }
 
   return (
